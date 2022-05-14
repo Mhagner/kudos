@@ -1,5 +1,8 @@
 # Kudos App
 
+![image](https://user-images.githubusercontent.com/7644111/168410154-e3ac6f72-a54c-4218-97de-8069457dc12c.png)
+
+
 ![image](https://user-images.githubusercontent.com/7644111/168407111-5bc3bab9-48d4-4ac9-830e-0b4393406de5.png)
 
 # Welcome to Remix!

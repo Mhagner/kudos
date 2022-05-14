@@ -36,7 +36,6 @@ export async function register(user: RegisterForm) {
     const newUser = await createUser(user);
 
     if (!newUser) {
-        console.log(`Error creating user ${user.email} ${user.password}`);
         return json({
             error: "Failed to create user",
             fields: { email: user.email, password: user.password }
@@ -51,8 +50,7 @@ export async function register(user: RegisterForm) {
 export async function login({ email, password }: LoginForm) {
     const user = await prisma.user.findUnique({ where: { email } });
 
-    if (!user || await bcrypt.compare(password, user.password)) {
-        console.log(`Error logging in user ${user} ${user?.password}`);
+    if (!user || !(await bcrypt.compare(password, user.password))) {
         return json({
             error: "Invalid email or password"
         }, {
@@ -73,4 +71,61 @@ export async function createUserSession(userId: string, redirectTo: string) {
             'Set-Cookie': await storage.commitSession(session),
         },
     });
+}
+
+export async function requiredUserId(request: Request, redirectTo: string = new URL(request.url).pathname) {
+    const session = await getUserSession(request);
+    const userId = session.get('userId');
+
+    if (!userId || typeof userId !== 'string') {
+        const searchParams = new URLSearchParams([['redirectTo', redirectTo]]);
+        throw redirect(`/login?${searchParams}`)
+    }
+
+    return userId
+}
+
+export async function getUser(request: Request) {
+    const userId = await getUserId(request);
+
+    if (typeof userId !== 'string') {
+        return null;
+    }
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { id: true, email: true, profile: true }
+        });
+
+        console.log(user)
+
+        return user
+
+    } catch {
+        throw logout(request);
+    }
+}
+
+export async function logout(request: Request) {
+    const session = await getUserSession(request);
+
+    return redirect('/login', {
+        headers: {
+            'Set-Cookie': await storage.destroySession(session),
+        },
+    });
+}
+
+async function getUserId(request: Request) {
+    const session = await getUserSession(request);
+    const userId = session.get('userId');
+
+    if (!userId || typeof userId !== 'string') return null
+
+    return userId
+}
+
+function getUserSession(request: Request) {
+    return storage.getSession(request.headers.get('cookie'));
 }

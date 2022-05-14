@@ -1,3 +1,11 @@
+import { LoaderFunction } from "@remix-run/node"
+import { requiredUserId } from "~/utils/auth.server"
+
+export const loader: LoaderFunction = async ({ request }) => {
+  await requiredUserId(request)
+  return null
+}
+
 export default function Index() {
   return (
     <div className="h-screen bg-slate-900 flex justify-center items-center">

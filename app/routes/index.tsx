@@ -1,4 +1,4 @@
-import { LoaderFunction } from "@remix-run/node"
+import type { LoaderFunction } from "@remix-run/node"
 import { requiredUserId } from "~/utils/auth.server"
 
 export const loader: LoaderFunction = async ({ request }) => {

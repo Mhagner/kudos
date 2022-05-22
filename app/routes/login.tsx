@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { useActionData } from '@remix-run/react';
 import { json, redirect } from '@remix-run/node';
-import { FormField } from '~/components/formField';
+import { FormField } from '~/components/form-field';
 import { Layout } from '~/components/layout';
 import { validateEmail, validateName, validatePassword } from '~/utils/validator.server';
 import { getUser, login, register } from '~/utils/auth.server';
@@ -58,7 +58,7 @@ export const action: ActionFunction = async ({ request }) => {
             return await register({ email, password, firstName, lastName });
         }
         default:
-            return json({ error: `Invalid Form Data`, form: action }, { status: 400 })
+            return json({ error: `Invalid Form Data` }, { status: 400 })
     }
 }
 

@@ -98,8 +98,6 @@ export async function getUser(request: Request) {
             select: { id: true, email: true, profile: true }
         });
 
-        console.log(user)
-
         return user
 
     } catch {
@@ -127,5 +125,5 @@ async function getUserId(request: Request) {
 }
 
 function getUserSession(request: Request) {
-    return storage.getSession(request.headers.get('cookie'));
+    return storage.getSession(request.headers.get('Cookie'));
 }

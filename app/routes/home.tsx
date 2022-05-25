@@ -4,7 +4,7 @@ import { Layout } from "~/components/layout"
 import { UserPanel } from "~/components/user-panel"
 import { requiredUserId } from "~/utils/auth.server"
 import { getOtherUsers } from "~/utils/users.server"
-import { useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 
 export const loader: LoaderFunction = async ({ request }) => {
     const userId = await requiredUserId(request)
@@ -18,6 +18,7 @@ export default function Home() {
 
     return (
         <Layout>
+            <Outlet />
             <div className="flex h-full">
                 <UserPanel users={users} />
             </div>

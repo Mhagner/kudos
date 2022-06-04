@@ -6,7 +6,8 @@
 
 ![image](https://user-images.githubusercontent.com/7644111/171971816-eabbf5ce-8882-430e-8ee7-74d342b0b4c6.png)
 
-![image](https://user-images.githubusercontent.com/7644111/168407111-5bc3bab9-48d4-4ac9-830e-0b4393406de5.png)
+![image](https://user-images.githubusercontent.com/7644111/171971874-b4844227-dbf9-446e-bd53-5fdcc46f10a3.png)
+
 
 # Welcome to Remix!
 

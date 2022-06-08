@@ -1,5 +1,6 @@
-import { KudoStyle } from "@prisma/client";
-import type { LoaderFunction } from "@remix-run/node";
+import type { KudoStyle } from "@prisma/client";
+import { Color, Emoji } from "@prisma/client";
+import type { LoaderFunction, ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
@@ -9,7 +10,8 @@ import { getUserById } from "~/utils/users.server";
 import { SelectBox } from "~/components/select-box";
 import { colorMap, emojiMap } from "~/utils/constants";
 import { Kudo } from "~/components/kudo";
-import { getUser } from "~/utils/auth.server";
+import { getUser, requiredUserId } from "~/utils/auth.server";
+import { createKudo } from "~/utils/kudos.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
     const { userId } = params;
@@ -22,6 +24,43 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     const user = await getUser(request)
 
     return json({ recipient, user })
+}
+
+export const action: ActionFunction = async ({ request }) => {
+    const userId = await requiredUserId(request)
+
+    const form = await request.formData()
+    const message = form.get("message")
+    const backgroundColor = form.get("backgroundColor")
+    const textColor = form.get("textColor")
+    const emoji = form.get("emoji")
+    const recipientId = form.get("recipientId")
+
+    if (
+        typeof message !== "string" ||
+        typeof backgroundColor !== "string" ||
+        typeof textColor !== "string" ||
+        typeof emoji !== "string" ||
+        typeof recipientId !== "string"
+    ) {
+        return json({ error: "Invalid form data" }, { status: 400 })
+    }
+
+    if (!message.length) {
+        return json({ error: "Please provide a message" }, { status: 400 })
+    }
+
+    if (!recipientId.length) {
+        return json({ error: "No recipient Found!" }, { status: 400 })
+    }
+
+    await createKudo(message, userId, recipientId, {
+        backgroundColor: backgroundColor as Color,
+        textColor: textColor as Color,
+        emoji: emoji as Emoji,
+    })
+
+    return redirect("/home")
 }
 
 export default function KudoModal() {
